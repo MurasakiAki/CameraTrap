@@ -1,5 +1,6 @@
 import cv2
 import time
+from configparser import ConfigParser
 
 # Initialize camera
 camera = cv2.VideoCapture(0)
@@ -11,6 +12,13 @@ previous_gray = cv2.cvtColor(previous_frame, cv2.COLOR_BGR2GRAY)
 
 # Define threshold for motion detection
 threshold = 10000
+
+#Set config from config file
+config = ConfigParser()
+config.read("config.ini")
+
+mode = config.get('config', 'mode')
+print(mode)
 
 # Main loop for motion detection
 while True:
