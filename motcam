@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Define a function to start the motion_script.py script
+function start_motion {
+    python motion_script.py &
+}
+
+# Define a function to edit the config.ini file
+function edit_config {
+    read -p "Enter the mode photo/video: " mode
+    read -p "Enter the time value (in sec, time of recorded video): " time
+    sed -i "s/^mode=.*/mode=$mode/" config.ini
+    sed -i "s/^time=.*/time=$time/" config.ini
+}
+
+# Main script
+
+if [ "$1" == "-edit" ]; then
+    edit_config
+elif [ "$1" == "-start" ]; then
+    start_motion
+else
+    echo "Invalid argument. Usage: motcam [-edit | -start]"
+fi
