@@ -66,32 +66,13 @@ while True:
 
     #Video mode
     elif mode == "video":
-        motion_detected = False
-        frames = []
-        while True:
+        fourcc = cv2.VideoWriter_fourcc(*"XVID")
+        out = cv2.VideoWriter("output.avi", fourcc, 20.0, (640, 480))
+    
+        start_time = time.time()
+        while (time.time() - start_time) < video_time:
             ret, frame = camera.read()
-            if(frame is not None):
-                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            blur = cv2.GaussianBlur(gray, (21, 21), 0)
-            contours, _ = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            if contours and not motion_detected:
-                print("Motion detected!")
-                motion_detected = True
-            elif not contours and motion_detected:
-                print("Motion stopped!")
-                break
-            if motion_detected:
-                frames.append(frame)
-                if len(frames) >= video_time * 30:  # 30 frames per second
-                    break
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            out.write(frame)
+        
         camera.release()
-        cv2.destroyAllWindows()
-        if frames:
-            h, w, _ = frames[0].shape
-            out = cv2.VideoWriter("output.avi", cv2.VideoWriter_fourcc(*"MJPG"), 30, (w, h))
-            for frame in frames:
-                out.write(frame)
-            out.release()
-            print("Video saved!")
+        out.release()
