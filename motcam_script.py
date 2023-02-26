@@ -71,13 +71,14 @@ while True:
         else:
             # initialize video writer
             fourcc = cv2.VideoWriter_fourcc(*'XVID')
-            out = cv2.VideoWriter(f'motion_video_{time.time()}.avi', fourcc, 20.0, (640, 480))
+            video_path = f'motion_video_{time.time()}.avi'
+            out = cv2.VideoWriter('Captures/' + video_path, fourcc, 20.0, (640, 480))
             # start recording
             start_time = time.time()
             while time.time() - start_time < time_limit:
                 # capture a frame
                 ret, frame = cap.read()
-                # write the frame to the video file
+                # write the frame to the video file 
                 out.write(frame)
                 # display the frame
                 cv2.imshow('frame', frame)
