@@ -1,21 +1,28 @@
 import cv2
 import time
+import os
+from pathlib import Path
 import configparser
 
-config = configparser.ConfigParser()
-config.read('config.ini')
+path = Path(__file__)
+ROOT_DIR = path.parent.absolute()
+config_path = os.path.join(ROOT_DIR, "config.ini")
 
-mode = config.get('motion', 'mode')
-time_limit = int(config.get('motion', 'time'))
+config = configparser.ConfigParser()
+config.read(config_path)
+
+mode = config.get('config', 'mode')
+time_limit = int(config.get('config', 'time'))
 
 if mode == 'photo':
     print("Capturing photo...")
     # initialize video capture
     cap = cv2.VideoCapture(0)
+    image_path = f'motion_on{time.ctime()}.png'
     # capture a single frame
     ret, frame = cap.read()
     # save the captured frame
-    cv2.imwrite('motion_photo.jpg', frame)
+    cv2.imwrite('Captures/' + image_path, frame)
     # release the capture
     cap.release()
     print("Photo captured!")
