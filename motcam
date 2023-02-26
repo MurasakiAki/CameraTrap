@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CONF_PATH=/home/aki/Workplace/Git/CameraTrap/config.ini
+
 # Define a function to start the motion_script.py script
 function start_motion {
     python motion_script.py &
@@ -7,10 +9,10 @@ function start_motion {
 
 # Define a function to edit the config.ini file
 function edit_config {
-    read -p "Enter the mode photo/video: " mode
-    read -p "Enter the time value (in sec, time of recorded video): " time
-    sed -i "s/^mode=.*/mode=$mode/" config.ini
-    sed -i "s/^time=.*/time=$time/" config.ini
+    read -p "Enter the mode photo/video: " new_mode
+    read -p "Enter the time value (in sec, time of recorded video): " new_time
+    sed -i 's/mode=.*/mode='"$new_mode"'/g' $CONF_PATH
+    sed -i 's/time=.*/time='"$new_time"'/g' $CONF_PATH
 }
 
 # Main script
