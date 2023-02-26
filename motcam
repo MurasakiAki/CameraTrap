@@ -1,10 +1,10 @@
 #!/bin/bash
 
-CONF_PATH=/home/aki/Workplace/Git/CameraTrap/config.ini
+CONF_PATH=/home/aki/Workplace/Git/CameraTrap/CameraTrap/config.ini
 
 # Define a function to start the motion_script.py script
 function start_motion {
-    python motion_script.py &
+    python3 /home/aki/Workplace/Git/CameraTrap/CameraTrap/motion_script.py &
 }
 
 # Define a function to edit the config.ini file

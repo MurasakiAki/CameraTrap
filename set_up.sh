@@ -7,6 +7,7 @@ chmod u+x motcam
 export PATH=$PATH:$(pwd)
 
 # Save the updated PATH variable to the bashrc file
-echo "export PATH=\$PATH:$(pwd)" >> ~/.bashrc
+echo "export PATH=\$PATH:$(pwd)" >> ~/.profile
+#echo "export PATH=\$PATH:$(pwd)" >> ~/.bashrc
 
 echo "Your motcam is set up."

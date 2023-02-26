@@ -1,6 +1,8 @@
+import os
 import cv2
 import time
 import imutils
+from pathlib import Path
 from configparser import ConfigParser
 
 # Initialize camera
@@ -13,34 +15,21 @@ config = ConfigParser()
 # Capture initial frame for comparison
 _, initial_frame = camera.read()
 initial_frame = imutils.rotate(initial_frame, 180)
-
-
-#Increase brightness in case of dark enviroment
-def increase_brightness(img, value=30):
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    h, s, v = cv2.split(hsv)
-
-    lim = 255 - value
-    v[v > lim] = 255
-    v[v <= lim] += value
-
-    final_hsv = cv2.merge((h, s, v))
-    img = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
-    return img
-
-#Increasing brightness of the initial frame
-initial_gray = increase_brightness(initial_frame)
 initial_gray = cv2.cvtColor(initial_frame, cv2.COLOR_BGR2GRAY)
 
 # Define threshold for motion detection
 threshold = 10000
 
 #Set camera config from config file
-config.read("config.ini")
+path = Path(__file__)
+ROOT_DIR = path.parent.absolute()
+config_path = os.path.join(ROOT_DIR, "config.ini")
+
+config.read(config_path)
 
 mode = config.get('config', 'mode')
 video_time = config.getint('config', 'time')
-print(mode)
+#print(mode)
 
 # Main loop for motion detection
 while True:
@@ -66,7 +55,7 @@ while True:
         if motion > threshold:
             current_time = time.ctime()
             file_name = f"motion_detected_on_"+ current_time +".jpg"
-            print("Motion detected!")
+            #print("Motion detected!")
             cv2.imwrite("Captures/"+file_name, current_frame)
             
         # Set current frame as previous frame for next iteration
@@ -95,7 +84,7 @@ while True:
         if motion > threshold:
             current_time = time.ctime()
             file_name = f"motion_detected_on_"+ current_time +".mp4"
-            print("Motion detected!")
+            # print("Motion detected!")
             
         # Set current frame as previous frame for next iteration
         initial_gray = current_gray
