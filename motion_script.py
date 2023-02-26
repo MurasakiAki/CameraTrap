@@ -5,6 +5,9 @@ import imutils
 from pathlib import Path
 from configparser import ConfigParser
 
+# Define threshold for motion detection
+threshold = 10000
+
 # Initialize camera
 camera = cv2.VideoCapture(0)
 time.sleep(2)
@@ -33,9 +36,6 @@ while True:
 
     #Photo mode
     if mode == "photo":
-        # Define threshold for motion detection
-        threshold = 10000
-
         # Capture current frame and convert to grayscale
         config = ConfigParser()
         _, current_frame = camera.read()
@@ -70,10 +70,10 @@ while True:
         frames = []
         while True:
             ret, frame = camera.read()
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            if(frame is not None):
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (21, 21), 0)
-            _, thresh = cv2.threshold(blur, 20, 255, cv2.THRESH_BINARY)
-            contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             if contours and not motion_detected:
                 print("Motion detected!")
                 motion_detected = True
@@ -83,9 +83,7 @@ while True:
             if motion_detected:
                 frames.append(frame)
                 if len(frames) >= video_time * 30:  # 30 frames per second
-                    print(f"Recording stopped after {video_time} seconds.")
                     break
-            cv2.imshow("video", frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
         camera.release()
