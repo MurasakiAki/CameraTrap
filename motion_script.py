@@ -14,7 +14,7 @@ config = ConfigParser()
 
 # Capture initial frame for comparison
 _, initial_frame = camera.read()
-initial_frame = imutils.rotate(initial_frame, 180)
+#initial_frame = imutils.rotate(initial_frame, 180)
 initial_gray = cv2.cvtColor(initial_frame, cv2.COLOR_BGR2GRAY)
 
 #Set camera config from config file
@@ -39,7 +39,7 @@ while True:
     # Capture current frame and convert to grayscale
     config = ConfigParser()
     _, current_frame = camera.read()
-    current_frame = imutils.rotate(current_frame, 180)
+    #current_frame = imutils.rotate(current_frame, 180)
     current_gray = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
 
     # Calculate difference between current and previous frame
@@ -53,20 +53,25 @@ while True:
         
     # If motion is detected, print message and save image
     if motion > threshold:
+        print("Motion detected.")
         current_time = time.ctime()
         if mode == "photo":
+            print("Capturing photo")
             file_name = f"motion_detected_on_"+ current_time +".jpg"
-            #print("Motion detected!")
             cv2.imwrite("Captures/"+file_name, current_frame)
+
         elif mode == "video":
+            file_name = f"motion_detected_on_"+ current_time +".avi"
             fourcc = cv2.VideoWriter_fourcc(*"XVID")
-            out = cv2.VideoWriter("output.avi", fourcc, 20.0, (640, 480))
-    
+            out = cv2.VideoWriter(file_name, fourcc, 20.0, (640, 480))
+
+            print("Recording video")
             start_time = time.time()
             while (time.time() - start_time) < video_time:
                 ret, frame = camera.read()
                 out.write(frame)
-        
+
+            print("Video recorded")
             camera.release()
             out.release()
             
