@@ -32,47 +32,49 @@ video_time = config.getint('config', 'time')
 while True:
 
     #Photo mode
-    if mode == "photo":
-        # Define threshold for motion detection
-        threshold = 10000
+    
+    # Define threshold for motion detection
+    threshold = 10000
 
-        # Capture current frame and convert to grayscale
-        config = ConfigParser()
-        _, current_frame = camera.read()
-        current_frame = imutils.rotate(current_frame, 180)
-        current_gray = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
+    # Capture current frame and convert to grayscale
+    config = ConfigParser()
+    _, current_frame = camera.read()
+    current_frame = imutils.rotate(current_frame, 180)
+    current_gray = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
 
-        # Calculate difference between current and previous frame
-        frame_diff = cv2.absdiff(initial_gray, current_gray)
+    # Calculate difference between current and previous frame
+    frame_diff = cv2.absdiff(initial_gray, current_gray)
 
-        # Apply threshold to detect motion
-        _, frame_diff_threshold = cv2.threshold(frame_diff, 45, 255, cv2.THRESH_BINARY)
+    # Apply threshold to detect motion
+    _, frame_diff_threshold = cv2.threshold(frame_diff, 45, 255, cv2.THRESH_BINARY)
 
-        # Calculate number of non-zero pixels in thresholded difference image
-        motion = cv2.countNonZero(frame_diff_threshold)
+    # Calculate number of non-zero pixels in thresholded difference image
+    motion = cv2.countNonZero(frame_diff_threshold)
         
-        # If motion is detected, print message and save image
-        if motion > threshold:
-            current_time = time.ctime()
+    # If motion is detected, print message and save image
+    if motion > threshold:
+        current_time = time.ctime()
+        if mode == "photo":
             file_name = f"motion_detected_on_"+ current_time +".jpg"
             #print("Motion detected!")
             cv2.imwrite("Captures/"+file_name, current_frame)
-            
-        # Set current frame as previous frame for next iteration
-        initial_gray = current_gray
-
-        # Wait for a moment before repeating loop
-        time.sleep(0.2)
-
-    #Video mode
-    elif mode == "video":
-        fourcc = cv2.VideoWriter_fourcc(*"XVID")
-        out = cv2.VideoWriter("output.avi", fourcc, 20.0, (640, 480))
+        elif mode == "video":
+            fourcc = cv2.VideoWriter_fourcc(*"XVID")
+            out = cv2.VideoWriter("output.avi", fourcc, 20.0, (640, 480))
     
-        start_time = time.time()
-        while (time.time() - start_time) < video_time:
-            ret, frame = camera.read()
-            out.write(frame)
+            start_time = time.time()
+            while (time.time() - start_time) < video_time:
+                ret, frame = camera.read()
+                out.write(frame)
         
-        camera.release()
-        out.release()
+            camera.release()
+            out.release()
+            
+    # Set current frame as previous frame for next iteration
+    initial_gray = current_gray
+
+    # Wait for a moment before repeating loop
+    time.sleep(0.2)
+
+   
+        
