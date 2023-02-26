@@ -5,9 +5,6 @@ import imutils
 from pathlib import Path
 from configparser import ConfigParser
 
-# Define threshold for motion detection
-threshold = 10000
-
 # Initialize camera
 camera = cv2.VideoCapture(0)
 time.sleep(2)
@@ -36,6 +33,9 @@ while True:
 
     #Photo mode
     if mode == "photo":
+        # Define threshold for motion detection
+        threshold = 10000
+
         # Capture current frame and convert to grayscale
         config = ConfigParser()
         _, current_frame = camera.read()
