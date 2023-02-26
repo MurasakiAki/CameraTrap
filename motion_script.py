@@ -17,9 +17,6 @@ _, initial_frame = camera.read()
 initial_frame = imutils.rotate(initial_frame, 180)
 initial_gray = cv2.cvtColor(initial_frame, cv2.COLOR_BGR2GRAY)
 
-# Define threshold for motion detection
-threshold = 10000
-
 #Set camera config from config file
 path = Path(__file__)
 ROOT_DIR = path.parent.absolute()
@@ -36,6 +33,9 @@ while True:
 
     #Photo mode
     if mode == "photo":
+        # Define threshold for motion detection
+        threshold = 10000
+
         # Capture current frame and convert to grayscale
         config = ConfigParser()
         _, current_frame = camera.read()
@@ -66,28 +66,34 @@ while True:
 
     #Video mode
     elif mode == "video":
-        # Capture current frame and convert to grayscale
-        _, current_frame = camera.read()
-        current_frame = imutils.rotate(current_frame, 180)
-        current_gray = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
-
-        # Calculate difference between current and previous frame
-        frame_diff = cv2.absdiff(initial_gray, current_gray)
-
-        # Apply threshold to detect motion
-        _, frame_diff_threshold = cv2.threshold(frame_diff, 45, 255, cv2.THRESH_BINARY)
-
-        # Calculate number of non-zero pixels in thresholded difference image
-        motion = cv2.countNonZero(frame_diff_threshold)
-
-          # If motion is detected, print message and save video
-        if motion > threshold:
-            current_time = time.ctime()
-            file_name = f"motion_detected_on_"+ current_time +".mp4"
-            # print("Motion detected!")
-            
-        # Set current frame as previous frame for next iteration
-        initial_gray = current_gray
-
-        # Wait for a moment before repeating loop
-        time.sleep(0.2)
+        motion_detected = False
+        frames = []
+        while True:
+            ret, frame = camera.read()
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            blur = cv2.GaussianBlur(gray, (21, 21), 0)
+            _, thresh = cv2.threshold(blur, 20, 255, cv2.THRESH_BINARY)
+            contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            if contours and not motion_detected:
+                print("Motion detected!")
+                motion_detected = True
+            elif not contours and motion_detected:
+                print("Motion stopped!")
+                break
+            if motion_detected:
+                frames.append(frame)
+                if len(frames) >= video_time * 30:  # 30 frames per second
+                    print(f"Recording stopped after {video_time} seconds.")
+                    break
+            cv2.imshow("video", frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        camera.release()
+        cv2.destroyAllWindows()
+        if frames:
+            h, w, _ = frames[0].shape
+            out = cv2.VideoWriter("output.avi", cv2.VideoWriter_fourcc(*"MJPG"), 30, (w, h))
+            for frame in frames:
+                out.write(frame)
+            out.release()
+            print("Video saved!")
