@@ -31,6 +31,7 @@ time.sleep(2)
 while is_running == True:
     # capture a frame
     ret, frame = cap.read()
+    cap.release()
     if frame is not None:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
@@ -51,6 +52,8 @@ while is_running == True:
     if frame_count % motion_detection_interval == 0:
     # calculate difference between current frame and motion frame
         frame_delta = cv2.absdiff(motion_frame, gray)
+        if frame_delta is None:
+            continue
         thresh = cv2.threshold(frame_delta, 25, 255, cv2.THRESH_BINARY)[1]
     
         # dilate the thresholded image to fill in holes
