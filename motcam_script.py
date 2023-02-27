@@ -23,15 +23,15 @@ motion_detected = False
 frame_count = 0
 
 #initialize camera
-cap = cv2.VideoCapture(-1, cv2.CAP_V4L)
-time.sleep(2)
+cap = cv2.VideoCapture(-1, 2)
+time.sleep(3)
 
 
 # start capture loop
 while is_running == True:
     # capture a frame
     ret, frame = cap.read()
-    cap.release()
+    #cap.release()
     if frame is not None:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
