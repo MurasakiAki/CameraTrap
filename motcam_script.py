@@ -41,9 +41,6 @@ while is_running == True:
 
     # increment frame count
     frame_count += 1
-
-    # convert frame to grayscale for motion detection
-    
     
     # set initial motion frame
     if motion_frame is None:
