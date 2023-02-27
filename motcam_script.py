@@ -15,12 +15,7 @@ mode = config.get('config', 'mode')
 time_limit = int(config.get('config', 'time'))
 capture_interval = int(config.get('config', 'capture_interval'))
 motion_detection_interval = int(config.get('config', 'motion_detection_interval'))
-
-if mode == 'photo':
-    print("Capturing photos...")
-else:
-    print("Recording videos...")
-
+is_running = bool(config.get('config','running'))
     
 # initialize motion detection parameters
 motion_frame = None
@@ -33,7 +28,7 @@ time.sleep(2)
 
 
 # start capture loop
-while True:
+while is_running == True:
     # capture a frame
     ret, frame = cap.read()
     if frame is not None:
@@ -83,7 +78,7 @@ while True:
                 # capture a single frame
                 image_path = f'motion_on_{time.time()}.png'
                 cv2.imwrite('Captures/' + image_path, frame)
-                print("Photo captured!")
+                #print("Photo captured!")
             else:
                 # initialize video writer
                 fourcc = cv2.VideoWriter_fourcc(*'XVID')
@@ -102,11 +97,12 @@ while True:
                 # release the writer
                 out.release()
                 cv2.destroyAllWindows()
-                print("Video recorded!")
+                #print("Video recorded!")
         
             # reset motion detection parameters
             motion_detected = False
             motion_frame = None
             frame_count = 0
+    is_running = bool(config.get('config','running'))
     
 cap.release()
