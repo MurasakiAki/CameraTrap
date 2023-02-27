@@ -2,10 +2,16 @@ import configparser
 import cv2
 import time
 import os
+from pathlib import Path
 
 # Load configuration settings from config.ini file
+
+path = Path(__file__)
+ROOT_DIR = path.parent.absolute()
+config_path = os.path.join(ROOT_DIR, "config.ini")
+
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read(config_path)
 mode = config.get('Settings', 'mode')
 time_limit = config.getint('Settings', 'time')
 is_running = config.getboolean('Settings', 'is_running')
@@ -58,7 +64,7 @@ while is_running:
         time.sleep(0.1)
 
         # Check the is_running setting in the config file to see if the loop should be stopped
-        config.read('config.ini')
+        config.read(config_path)
         is_running = config.getboolean('Settings', 'is_running')
 
     except KeyboardInterrupt:
