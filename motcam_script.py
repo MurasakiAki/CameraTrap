@@ -21,9 +21,7 @@ if mode == 'photo':
 else:
     print("Recording videos...")
 
-# initialize video capture
-cap = cv2.VideoCapture(0)
-
+    
 # initialize motion detection parameters
 motion_frame = None
 motion_detected = False
@@ -31,15 +29,28 @@ frame_count = 0
 
 # start capture loop
 while True:
+
+    # initialize video capture
+    cap = cv2.VideoCapture(-1, cv2.CAP_V4L)
+    time.sleep(2)
+
     # capture a frame
     ret, frame = cap.read()
-    
+    if frame is not None:
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (21, 21), 0)
+    else:
+        ret, frame = cap.read()
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (21, 21), 0)
+
+    cap.release()
+
     # increment frame count
     frame_count += 1
 
     # convert frame to grayscale for motion detection
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (21, 21), 0)
+    
     
     # set initial motion frame
     if motion_frame is None:
@@ -76,6 +87,11 @@ while True:
                 cv2.imwrite('Captures/' + image_path, frame)
                 print("Photo captured!")
             else:
+
+                # initialize video capture
+                cap = cv2.VideoCapture(-1, cv2.CAP_V4L)
+                time.sleep(2)
+
                 # initialize video writer
                 fourcc = cv2.VideoWriter_fourcc(*'XVID')
                 out = cv2.VideoWriter(f'motion_video_{time.time()}.avi', fourcc, 20.0, (640, 480))
@@ -93,6 +109,7 @@ while True:
                 # release the writer
                 out.release()
                 cv2.destroyAllWindows()
+                cap.release()
                 print("Video recorded!")
         
             # reset motion detection parameters
