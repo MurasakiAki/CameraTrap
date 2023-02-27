@@ -118,4 +118,11 @@ while True:
             frame_count = 0
     
             #
+
+            [ WARN:0] global /tmp/pip-wheel-hwcmjluw/opencv-python_dc56ddd000dd4893b1f852d88d4a5959/opencv/modules/videoio/src/cap_v4l.cpp (890) open VIDEOIO(V4L2:/dev/video0): can't open camera by index
+Traceback (most recent call last):
+  File "/home/aki/Workplace/Git/CameraTrap/CameraTrap/motcam_script.py", line 44, in <module>
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+cv2.error: OpenCV(4.5.3) /tmp/pip-wheel-hwcmjluw/opencv-python_dc56ddd000dd4893b1f852d88d4a5959/opencv/modules/imgproc/src/color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cvtColor'
+
     
