@@ -31,14 +31,13 @@ time.sleep(3)
 while is_running == True:
     # capture a frame
     ret, frame = cap.read()
-    #cap.release()
+    if not ret:
+        continue
     if frame is not None:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
     else:
-        ret, frame = cap.read()
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (21, 21), 0)
+        continue
 
     # increment frame count
     frame_count += 1
