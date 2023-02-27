@@ -27,13 +27,13 @@ motion_frame = None
 motion_detected = False
 frame_count = 0
 
+#initialize camera
+cap = cv2.VideoCapture(-1, cv2.CAP_V4L)
+time.sleep(2)
+
+
 # start capture loop
 while True:
-
-    # initialize video capture
-    cap = cv2.VideoCapture(-1, cv2.CAP_V4L)
-    time.sleep(2)
-
     # capture a frame
     ret, frame = cap.read()
     if frame is not None:
@@ -43,8 +43,6 @@ while True:
         ret, frame = cap.read()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
-
-    cap.release()
 
     # increment frame count
     frame_count += 1
@@ -87,11 +85,6 @@ while True:
                 cv2.imwrite('Captures/' + image_path, frame)
                 print("Photo captured!")
             else:
-
-                # initialize video capture
-                cap = cv2.VideoCapture(-1, cv2.CAP_V4L)
-                time.sleep(2)
-
                 # initialize video writer
                 fourcc = cv2.VideoWriter_fourcc(*'XVID')
                 out = cv2.VideoWriter(f'motion_video_{time.time()}.avi', fourcc, 20.0, (640, 480))
@@ -109,7 +102,6 @@ while True:
                 # release the writer
                 out.release()
                 cv2.destroyAllWindows()
-                cap.release()
                 print("Video recorded!")
         
             # reset motion detection parameters
@@ -117,12 +109,4 @@ while True:
             motion_frame = None
             frame_count = 0
     
-            #
-
-            [ WARN:0] global /tmp/pip-wheel-hwcmjluw/opencv-python_dc56ddd000dd4893b1f852d88d4a5959/opencv/modules/videoio/src/cap_v4l.cpp (890) open VIDEOIO(V4L2:/dev/video0): can't open camera by index
-Traceback (most recent call last):
-  File "/home/aki/Workplace/Git/CameraTrap/CameraTrap/motcam_script.py", line 44, in <module>
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-cv2.error: OpenCV(4.5.3) /tmp/pip-wheel-hwcmjluw/opencv-python_dc56ddd000dd4893b1f852d88d4a5959/opencv/modules/imgproc/src/color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cvtColor'
-
-    
+cap.release()
