@@ -1,107 +1,56 @@
+import configparser
 import cv2
 import time
-import os
-from pathlib import Path
-import configparser
 
-path = Path(__file__)
-ROOT_DIR = path.parent.absolute()
-config_path = os.path.join(ROOT_DIR, "config.ini")
-
+# Load configuration settings from config.ini file
 config = configparser.ConfigParser()
-config.read(config_path)
+config.read('config.ini')
+mode = config.get('Settings', 'mode')
+time_limit = config.getint('Settings', 'time')
+is_running = config.getboolean('Settings', 'is_running')
 
-mode = config.get('config', 'mode')
-time_limit = int(config.get('config', 'time'))
-capture_interval = int(config.get('config', 'capture_interval'))
-motion_detection_interval = int(config.get('config', 'motion_detection_interval'))
-is_running = config.get('config','running')
-    
-# initialize motion detection parameters
-motion_frame = None
-motion_detected = False
-frame_count = 0
+# Initialize camera and motion detector
+camera = cv2.VideoCapture(0)
+detector = cv2.createBackgroundSubtractorMOG2()
 
-#initialize camera
-cap = cv2.VideoCapture(-1, 2)
-time.sleep(3)
+# Create folder to store captured files if it does not already exist
+import os
+if not os.path.exists('Captures'):
+    os.makedirs('Captures')
 
+# Main loop to capture photos or videos when motion is detected
+while is_running:
+    # Capture a frame from the camera and convert it to grayscale
+    ret, frame = camera.read()
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-# start capture loop
-while is_running == "true":
-    # capture a frame
-    ret, frame = cap.read()
-    if not ret:
-        continue
-    if frame is not None:
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (21, 21), 0)
-    else:
-        continue
+    # Apply background subtraction to the frame to detect motion
+    mask = detector.apply(gray)
 
-    # increment frame count
-    frame_count += 1
-    
-    # set initial motion frame
-    if motion_frame is None:
-        motion_frame = gray
-        continue
-    
-    # detect motion every nth frame
-    if frame_count % motion_detection_interval == 0:
-    # calculate difference between current frame and motion frame
-        frame_delta = cv2.absdiff(motion_frame, gray)
-        if frame_delta is None:
-            continue
-        thresh = cv2.threshold(frame_delta, 25, 255, cv2.THRESH_BINARY)[1]
-    
-        # dilate the thresholded image to fill in holes
-        thresh = cv2.dilate(thresh, None, iterations=2)
-    
-        # find contours in the thresholded image
-        contours, hierarchy = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    
-        # check if motion is detected
-        for c in contours:
-            if cv2.contourArea(c) < 500:
-                continue
-            motion_detected = True
-    
-        # reset motion frame if no motion is detected
-        if not motion_detected:
-            motion_frame = gray
-    
-        # capture photo or record video if motion is detected
-        if motion_detected:
-            if mode == 'photo':
-                # capture a single frame
-                image_path = f'motion_on_{time.time()}.png'
-                cv2.imwrite(writeimage_path, frame)
-                #print("Photo captured!")
-            else:
-                # initialize video writer
-                fourcc = cv2.VideoWriter_fourcc(*'XVID')
-                out = cv2.VideoWriter(f'motion_video_{time.time()}.avi', fourcc, 20.0, (640, 480))
-                # start recording
-                start_time = time.time()
-                while time.time() - start_time < time_limit:
-                    # capture a frame
-                    ret, frame = cap.read()
-                    # write the frame to the video file 
-                    out.write(frame)
-                    # display the frame
-                    cv2.imshow('frame', frame)
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
-                        break
-                # release the writer
-                out.release()
-                cv2.destroyAllWindows()
-                #print("Video recorded!")
-        
-            # reset motion detection parameters
-            motion_detected = False
-            motion_frame = None
-            frame_count = 0
-    is_running = config.get('config','running')
-    
-cap.release()
+    # Check if enough motion has been detected to trigger a capture
+    motion = (cv2.countNonZero(mask) > 1000)
+
+    # If motion has been detected, capture a photo or video based on the configuration settings
+    if motion:
+        filename = time.strftime('%Y%m%d-%H%M%S')
+        if mode == 'photo':
+            cv2.imwrite(f'Captures/{filename}.jpg', frame)
+        elif mode == 'video':
+            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+            out = cv2.VideoWriter(f'Captures/{filename}.mp4', fourcc, 20.0, (640, 480))
+            start_time = time.time()
+            while (time.time() - start_time) < time_limit:
+                ret, frame = camera.read()
+                out.write(frame)
+            out.release()
+
+    # Wait for a short period of time before capturing the next frame
+    time.sleep(0.1)
+
+    # Check the is_running setting in the config file to see if the loop should be stopped
+    config.read('config.ini')
+    is_running = config.getboolean('Settings', 'is_running')
+
+# Release the camera and video writer objects
+camera.release()
+cv2.destroyAllWindows()
