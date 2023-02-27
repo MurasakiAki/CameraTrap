@@ -10,9 +10,13 @@ function start_motion {
 # Define a function to edit the config.ini file
 function edit_config {
     read -p "Enter the mode photo/video: " new_mode
-    read -p "Enter the time value (in sec, time of recorded video): " new_time
+    read -p "Enter the time value (in sec, time of recorded video, integer): " new_time
+    read -p "Enter interval of captures(in sec, integer):" new_c_interval
+    read -p "Enter interval of motion detection(in se, integer):" new_md_interval
     sed -i 's/mode=.*/mode='"$new_mode"'/g' $CONF_PATH
     sed -i 's/time=.*/time='"$new_time"'/g' $CONF_PATH
+    sed -i 's/capture_interval=.*/capture_interval='"$new_c_interval"'/g' $CONF_PATH
+    sed -i 's/motion_detection_interval=.*/motion_detection_interval='"$new_md_interval"'/g' $CONF_PATH
 }
 
 # Main script
