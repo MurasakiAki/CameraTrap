@@ -75,6 +75,14 @@ while is_running:
         cv2.destroyAllWindows()
         break
 
+    except Exception as e:
+        # If any other exception occurs, release the camera and video writer objects and print the error message
+        print(f"Error occurred: {e}")
+        if camera is not None:
+            camera.release()
+        cv2.destroyAllWindows()
+        break
+
 # Release the camera and video writer objects
 if camera is not None:
     camera.release()
