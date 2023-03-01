@@ -1,0 +1,51 @@
+* {
+    margin: 0%;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: streetwear;
+    src: url(font/Streetwear.otf);
+}
+
+body{
+    position: absolute;
+    background-color: #bd7348;
+    width: 100%;
+    height: 100%;
+}
+
+#title{
+    text-align: center;
+    margin-top: 5%;
+    margin-bottom: 1%;
+
+    font-size: xx-large;
+    font-family: streetwear;
+}
+
+#card{
+    text-align: center;
+    width: 30%;
+    height: 50%;
+    margin: auto;
+
+    background-color: white ;
+    
+    border-radius: 5%;
+    border-width: 10px;
+    border-color: lightgray;
+    border-style: solid ;
+
+    box-shadow: 5px 5px 30px black;
+
+}
+
+#image{
+    width: 100%;
+    height: 80%;
+    margin: auto;
+    
+    border-radius: 2.5% 2.5% 0 0;
+
+}
