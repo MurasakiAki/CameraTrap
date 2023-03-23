@@ -3,6 +3,7 @@ import cv2
 import time
 import os
 from pathlib import Path
+from datetime import datetime
 
 time.sleep(3)
 
@@ -43,14 +44,16 @@ while is_running:
         mask = detector.apply(gray)
 
         # Check if enough motion has been detected to trigger a capture
-        motion = (cv2.countNonZero(mask) > 1000)
+        motion = (cv2.countNonZero(mask) > 2000)
 
         # If motion has been detected, capture a photo or video based on the configuration settings
         if motion:
-            filename = time.strftime('%Y%m%d-%H%M%S')
+            filename = f"motion_captured_on_{datetime.now()}"
             if mode == 'photo':
+                time.sleep(0.5)
                 cv2.imwrite(f'Captures/{filename}.jpg', frame)
             elif mode == 'video':
+                time.sleep(0.5)
                 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
                 out = cv2.VideoWriter(f'Captures/{filename}.mp4', fourcc, 20.0, (640, 480))
                 start_time = time.time()
