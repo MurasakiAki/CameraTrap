@@ -1,11 +1,18 @@
 #!/bin/bash
 
-CONF_PATH=/home/aki/Workplace/Git/CameraTrap/CameraTrap/config.ini
+# Search for config.ini file using the find command
+CONF_PATH=$(find / -name "config.ini" 2>/dev/null | grep "/MotCam/config.ini")
+
+# Check if config_file variable is empty
+if [ -z "$CONF_PATH" ]; then
+  echo "Could not find config.ini file"
+else
+  echo "Found config.ini file at: $CONF_PATH"
 
 # Define a function to start the motion_script.py script
 function start_motion {
     sed -i 's/is_running=.*/is_running='"True"'/g' $CONF_PATH
-    python3 /home/aki/Workplace/Git/CameraTrap/CameraTrap/motcam_script.py &
+    python3 /home/aki/Workplace/Git/CameraTrap/CameraTrap/MotCam/motcam_script.py &
 }
 
 # Define a function to edit the config.ini file
