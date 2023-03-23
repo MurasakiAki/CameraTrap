@@ -21,8 +21,10 @@ function start_motion {
 function edit_config {
     read -p "Enter the mode photo/video: " new_mode
     read -p "Enter the time value (in sec, time of recorded video, integer): " new_time
+    read -p "Enter camera sensitivity(1000 is default): " new_sensitivity
     sed -i 's/mode=.*/mode='"$new_mode"'/g' $CONF_PATH
     sed -i 's/time=.*/time='"$new_time"'/g' $CONF_PATH
+    sed -i 's/sensitivity=.*/sensitivity='"$new_sensitivity"'/g' $CONF_PATH
 }
 
 #Define a function for stopping the motcam_script.py
@@ -31,7 +33,6 @@ function stop_motion {
 }
 
 # Main script
-
 if [ "$1" == "-edit" ]; then
     edit_config
 elif [ "$1" == "-start" ]; then
