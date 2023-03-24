@@ -7,12 +7,12 @@ from datetime import datetime
 
 time.sleep(3)
 
-# Load configuration settings from config.ini file
 path = Path(__file__)
 ROOT_DIR = path.parent.absolute()
 config_path = os.path.join(ROOT_DIR, "config.ini")
 can_start = True
 
+# Load configuration settings from config.ini file
 config = configparser.ConfigParser()
 config.read(config_path)
 mode = config.get('Settings', 'mode')
