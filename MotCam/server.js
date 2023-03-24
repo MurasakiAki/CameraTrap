@@ -6,7 +6,7 @@ const app = express();
 
 app.use(express.static('pictures'));
 
-const PORT = process.env.PORT || 3000; // Use the provided PORT environment variable or default to 3000
+const PORT = process.env.PORT || 22109;
 
 const server = http.createServer((req, res) => {
   // Serve index.html for requests to the root URL

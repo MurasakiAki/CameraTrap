@@ -46,7 +46,7 @@ function noteUpdate(index){
 //Functions for scrolling through pictures
 function nextPicture(){
     var full_src = picture.src;
-    var src = full_src.replace(/http:\/\/localhost:3000/gm, '');
+    var src = full_src.replace(/www9.spse.1984.cz/gm, '');
     console.log(src);
     var current_index = pictures.indexOf(src);
     console.log("Current " + current_index);
@@ -62,7 +62,7 @@ function nextPicture(){
 
 function prevPicture(){
     var full_src = picture.src;
-    var src = full_src.replace(/http:\/\/localhost:3000/gm, '');
+    var src = full_src.replace(/www9.spse.1984.cz/gm, '');
     console.log(src);
     var current_index = pictures.indexOf(src);
     console.log("Current " + current_index);
